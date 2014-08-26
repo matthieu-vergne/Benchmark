@@ -10,7 +10,16 @@ import fr.vergne.benchmark.event.TaskExecutedEvent;
 import fr.vergne.benchmark.event.TaskFailedEvent;
 import fr.vergne.benchmark.event.TaskSelectedEvent;
 
-
+/**
+ * A {@link BenchmarkRunner} aims at running a {@link Benchmark} step by step.
+ * Each time the {@link #run()} method is called, a {@link Task} of the
+ * {@link Benchmark} is selected and executed. During each single run, several
+ * {@link BenchmarkEvent}s are generated and can be catched by registering a
+ * listener with {@link #registerListener(BenchmarkEventListener)}.
+ * 
+ * @author Matthieu Vergne <matthieu.vergne@gmail.com>
+ * 
+ */
 public class BenchmarkRunner {
 
 	private Benchmark benchmark = null;
@@ -19,11 +28,31 @@ public class BenchmarkRunner {
 	public void setBenchmark(Benchmark benchmark) {
 		this.benchmark = benchmark;
 	}
-	
+
 	public Benchmark getBenchmark() {
 		return benchmark;
 	}
 
+	/**
+	 * Execute a single {@link Task} of the {@link Benchmark} managed by this
+	 * {@link BenchmarkRunner}. During the process, several
+	 * {@link BenchmarkEvent}s are generated:
+	 * <ol>
+	 * <li>A {@link TaskSelectedEvent} which provides the selected {@link Task},
+	 * </li>
+	 * <li>A {@link TaskExecutedEvent} if the execution of the {@link Task} runs
+	 * well,</li>
+	 * <li>A {@link TaskFailedEvent} if the {@link Task} fail to be executed
+	 * fully,</li>
+	 * <li>A {@link LinkTransferedEvent} for each {@link Link} transferred.</li>
+	 * </ol>
+	 * 
+	 * @throws NoTaskToRunException
+	 *             if no {@link Task} of the {@link Benchmark} can be selected
+	 *             for execution
+	 * @throws FailedTaskException
+	 *             if the {@link Task} selected has generated an exception
+	 */
 	public void run() throws NoTaskToRunException {
 		Task task = selectTask();
 		if (task == null) {
