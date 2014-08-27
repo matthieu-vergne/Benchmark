@@ -19,7 +19,6 @@ import fr.vergne.benchmark.Task;
  * 
  * @param <Item>
  */
-// FIXME test
 public class RandomSelector<Item> extends AbstractSimpleTask {
 
 	public static final String COLLECTION = "collection";

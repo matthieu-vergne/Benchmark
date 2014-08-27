@@ -28,32 +28,12 @@ import fr.vergne.benchmark.Task;
  * @author Matthieu Vergne <matthieu.vergne@gmail.com>
  * 
  */
-// FIXME test
 public abstract class AbstractSimpleTask implements Task {
 
 	private boolean shouldExecute = true;
-	private final Map<Object, InputSetter<?>> inputs;
-	private final Collection<Object> remainingInput = new HashSet<Object>();
-	private final Map<Object, OutputGetter<?>> outputs = getOutputs();
+	private final Collection<Object> setInputs = new HashSet<Object>();
 
 	public AbstractSimpleTask() {
-		inputs = new HashMap<Object, InputSetter<?>>();
-		inputs.putAll(getInputs());
-		remainingInput.addAll(inputs.keySet());
-
-		Object resetId = getResetInputId();
-		if (resetId != null) {
-			inputs.put(resetId, new InputSetter<Collection<Object>>() {
-
-				@Override
-				public void set(Collection<Object> input) {
-					remainingInput.addAll(input);
-					shouldExecute = true;
-				}
-			});
-		} else {
-			// no reset input
-		}
 	}
 
 	/**
@@ -72,13 +52,35 @@ public abstract class AbstractSimpleTask implements Task {
 
 	@Override
 	public Collection<Object> getInputIds() {
-		return inputs.keySet();
+		return buildInputs().keySet();
+	}
+
+	private Map<Object, InputSetter<?>> buildInputs() {
+		Map<Object, InputSetter<?>> inputs;
+		inputs = new HashMap<Object, InputSetter<?>>();
+		inputs.putAll(getInputs());
+
+		Object resetId = getResetInputId();
+		if (resetId != null) {
+			inputs.put(resetId, new InputSetter<Collection<Object>>() {
+
+				@Override
+				public void set(Collection<Object> input) {
+					setInputs.removeAll(input);
+					shouldExecute = true;
+				}
+			});
+		} else {
+			// no reset input
+		}
+		return inputs;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <In> InputSetter<In> getInput(final Object id) {
-		if (getInputIds().contains(id)) {
+		Map<Object, InputSetter<?>> inputs = buildInputs();
+		if (inputs.containsKey(id)) {
 			final InputSetter<In> inputSetter = (InputSetter<In>) inputs
 					.get(id);
 			InputSetter<In> wrapper = new InputSetter<In>() {
@@ -86,7 +88,7 @@ public abstract class AbstractSimpleTask implements Task {
 				@Override
 				public void set(In input) {
 					inputSetter.set(input);
-					remainingInput.remove(id);
+					setInputs.add(id);
 				}
 			};
 			return wrapper;
@@ -99,14 +101,14 @@ public abstract class AbstractSimpleTask implements Task {
 
 	@Override
 	public Collection<Object> getOutputIds() {
-		return outputs.keySet();
+		return getOutputs().keySet();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <Out> OutputGetter<Out> getOutput(Object id) {
 		if (getOutputIds().contains(id)) {
-			return (OutputGetter<Out>) outputs.get(id);
+			return (OutputGetter<Out>) getOutputs().get(id);
 		} else {
 			throw new NoSuchElementException();
 		}
@@ -123,7 +125,7 @@ public abstract class AbstractSimpleTask implements Task {
 
 	@Override
 	public boolean isExecutable() {
-		return remainingInput.isEmpty();
+		return setInputs.containsAll(getInputs().keySet());
 	}
 
 	protected abstract void doExecute();

@@ -15,7 +15,6 @@ import fr.vergne.benchmark.Task;
  * @param <K>
  * @param <V>
  */
-// FIXME test
 public class MapBrowser<K, V> extends AbstractSimpleTask {
 
 	public static final String MAP = "map";

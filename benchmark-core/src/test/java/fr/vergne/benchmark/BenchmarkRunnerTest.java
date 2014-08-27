@@ -13,7 +13,6 @@ import fr.vergne.benchmark.event.TaskSelectedEvent;
 import fr.vergne.benchmark.testMaterial.AdditionTask;
 import fr.vergne.benchmark.testMaterial.LinearTask;
 
-// FIXME test events
 public class BenchmarkRunnerTest {
 
 	@Test
