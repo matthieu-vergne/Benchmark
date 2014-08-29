@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import fr.vergne.benchmark.BenchmarkBuilder;
 import fr.vergne.benchmark.InputSetter;
 import fr.vergne.benchmark.OutputGetter;
 import fr.vergne.benchmark.Task;
@@ -128,6 +129,16 @@ public abstract class AbstractSimpleTask implements Task {
 		return setInputs.containsAll(getInputs().keySet());
 	}
 
+	/**
+	 * This method should implement the actual process of this {@link Task}.<br/>
+	 * <br/>
+	 * NB: This {@link Task} is considered executed when the
+	 * {@link #doExecute()} method is finished. Consequently, if you request a
+	 * reset of the {@link Task} during its own process, it will be overridden
+	 * at the end of its execution. Use a {@link ForcedLink} or the method
+	 * {@link BenchmarkBuilder#linkValue(Task, Object, Task, Object)} to request
+	 * the reset once the {@link Task} has finished its execution.
+	 */
 	protected abstract void doExecute();
 
 	@Override
