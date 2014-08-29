@@ -167,7 +167,7 @@ public class BenchmarkBuilderTest {
 		builder.linkOutput(t1, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
 
 		assertEquals(3, builder.createInstance().getLinks().size());
-		builder.unlinkAll(t2);
+		builder.unrelate(t2);
 		assertEquals(1, builder.createInstance().getLinks().size());
 		builder.unlinkOutput(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
 		assertEquals(1, builder.createInstance().getLinks().size());

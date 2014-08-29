@@ -1,13 +1,17 @@
 package fr.vergne.benchmark;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Map;
 
 import fr.vergne.benchmark.impl.ForcedLink;
 import fr.vergne.benchmark.impl.ImmutableBenchmark;
 import fr.vergne.benchmark.impl.SyncLink;
+import fr.vergne.benchmark.util.IOIdentifier;
 
 /**
  * Builder to facilitate the creation of a {@link Benchmark}. All the methods
@@ -17,10 +21,13 @@ import fr.vergne.benchmark.impl.SyncLink;
  * @author Matthieu Vergne <matthieu.vergne@gmail.com>
  * 
  */
+// TODO revise the tests to consider the benchmark inputs/outputs
 public class BenchmarkBuilder {
 
 	private final Collection<Task> tasks = new LinkedHashSet<Task>();
 	private final Collection<Link<?>> links = new LinkedHashSet<Link<?>>();
+	private final Map<Object, IOIdentifier> inputs = new HashMap<Object, IOIdentifier>();
+	private final Map<Object, IOIdentifier> outputs = new HashMap<Object, IOIdentifier>();
 
 	/**
 	 * Calling {@link #createInstance()} just after calling this method create
@@ -29,6 +36,8 @@ public class BenchmarkBuilder {
 	public BenchmarkBuilder clear() {
 		links.clear();
 		tasks.clear();
+		inputs.clear();
+		outputs.clear();
 		return this;
 	}
 
@@ -46,8 +55,9 @@ public class BenchmarkBuilder {
 
 	/**
 	 * This method removes a {@link Task} from the {@link Benchmark}. If this
-	 * {@link Task} is still linked to others, an exception is thrown. You can
-	 * call {@link #unlinkAll(Task)} to ensure this case does not happen.
+	 * {@link Task} is still linked to others or used as an input/output of the
+	 * {@link Benchmark}, an exception is thrown. You can call
+	 * {@link #unrelate(Task)} to ensure this case does not happen.
 	 * 
 	 * @param task
 	 *            the {@link Task} to remove
@@ -63,6 +73,22 @@ public class BenchmarkBuilder {
 							"The task cannot be removed: it is still linked to others.");
 				} else {
 					// unrelated link
+				}
+			}
+			for (IOIdentifier id : inputs.values()) {
+				if (id.getTask() == task) {
+					throw new IllegalArgumentException(
+							"The task cannot be removed: it is still used as input of the benchmark.");
+				} else {
+					// different task
+				}
+			}
+			for (IOIdentifier id : outputs.values()) {
+				if (id.getTask() == task) {
+					throw new IllegalArgumentException(
+							"The task cannot be removed: it is still used as output of the benchmark.");
+				} else {
+					// different task
 				}
 			}
 			tasks.remove(task);
@@ -189,15 +215,16 @@ public class BenchmarkBuilder {
 	}
 
 	/**
-	 * This method removes all the links which relates a given {@link Task}.
-	 * After calling this method, the {@link Task}'s inputs and outputs are not
-	 * linked anymore, but the {@link Task} is still part of the
-	 * {@link Benchmark}. Use {@link #remove(Task)} to remove it once unlinked.
+	 * This method removes all the links which relates a given {@link Task} and
+	 * remove it from the {@link Benchmark}'s inputs/outputs. After calling this
+	 * method, the {@link Task}'s inputs and outputs are not linked anymore, but
+	 * the {@link Task} is still part of the {@link Benchmark}. Use
+	 * {@link #remove(Task)} to remove it once unlinked.
 	 * 
 	 * @param task
 	 *            the {@link Task} to unlink
 	 */
-	public <T> BenchmarkBuilder unlinkAll(Task task) {
+	public <T> BenchmarkBuilder unrelate(Task task) {
 		Iterator<Link<?>> iterator = links.iterator();
 		while (iterator.hasNext()) {
 			Link<?> link = iterator.next();
@@ -207,11 +234,32 @@ public class BenchmarkBuilder {
 				// unrelated link
 			}
 		}
+		Iterator<IOIdentifier> iterator2 = inputs.values().iterator();
+		while (iterator2.hasNext()) {
+			IOIdentifier id = iterator2.next();
+			if (id.getTask() == task) {
+				iterator2.remove();
+			} else {
+				// different task
+			}
+		}
+		Iterator<IOIdentifier> iterator3 = outputs.values().iterator();
+		while (iterator3.hasNext()) {
+			IOIdentifier id = iterator3.next();
+			if (id.getTask() == task) {
+				iterator3.remove();
+			} else {
+				// different task
+			}
+		}
 		return this;
 	}
 
 	/**
-	 * This method remove all the {@link Task}s which are not linked anymore.
+	 * This method is a convenient method to reduce the {@link Benchmark}. This
+	 * method remove all the {@link Task}s which are not linked anymore. If they
+	 * are used as inputs/outputs of the {@link Benchmark}, they are removed
+	 * anyway and the corresponding input/output are forgotten.
 	 */
 	public <T> BenchmarkBuilder clean() {
 		Collection<Task> retained = new HashSet<Task>();
@@ -219,7 +267,48 @@ public class BenchmarkBuilder {
 			retained.add(link.getSourceTask());
 			retained.add(link.getTargetTask());
 		}
+		Collection<Task> removed = new LinkedList<Task>(tasks);
+		removed.removeAll(retained);
+		for (Task task : removed) {
+			unrelate(task);
+		}
 		tasks.retainAll(retained);
+		return this;
+	}
+
+	/**
+	 * Set an input for the {@link Benchmark}.
+	 * 
+	 * @param id
+	 *            the ID of the {@link Benchmark}'s input
+	 * @param task
+	 *            the {@link Task} to use the input from
+	 * @param taskInputId
+	 *            the ID of the {@link Task}'s input used as input of the
+	 *            {@link Benchmark}
+	 */
+	// FIXME test
+	public BenchmarkBuilder setBenchmarkInput(Object id, Task task,
+			Object taskInputId) {
+		inputs.put(id, new IOIdentifier(task, taskInputId));
+		return this;
+	}
+
+	/**
+	 * Set an output for the {@link Benchmark}.
+	 * 
+	 * @param id
+	 *            the ID of the {@link Benchmark}'s output
+	 * @param task
+	 *            the {@link Task} to use the output from
+	 * @param taskOutputId
+	 *            the ID of the {@link Task}'s output used as output of the
+	 *            {@link Benchmark}
+	 */
+	// FIXME test
+	public BenchmarkBuilder setBenchmarkOutput(Object id, Task task,
+			Object taskOutputId) {
+		outputs.put(id, new IOIdentifier(task, taskOutputId));
 		return this;
 	}
 
@@ -232,7 +321,7 @@ public class BenchmarkBuilder {
 	 *         previously added
 	 */
 	public Benchmark createInstance() {
-		return new ImmutableBenchmark(tasks, links);
+		return new ImmutableBenchmark(tasks, links, inputs, outputs);
 	}
 
 }
