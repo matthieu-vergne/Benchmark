@@ -10,6 +10,7 @@ import fr.vergne.benchmark.event.LinkTransferedEvent;
 import fr.vergne.benchmark.event.TaskExecutedEvent;
 import fr.vergne.benchmark.event.TaskFailedEvent;
 import fr.vergne.benchmark.event.TaskSelectedEvent;
+import fr.vergne.benchmark.impl.SyncLink;
 import fr.vergne.benchmark.testMaterial.AdditionTask;
 import fr.vergne.benchmark.testMaterial.LinearTask;
 
@@ -26,10 +27,10 @@ public class BenchmarkRunnerTest {
 
 		BenchmarkBuilder builder = new BenchmarkBuilder();
 		builder.addAll(t1, t2, t3, t4, t5);
-		builder.link(t1, id, t2, id);
-		builder.link(t2, id, t3, id);
-		builder.link(t3, id, t4, id);
-		builder.link(t4, id, t5, id);
+		builder.linkOutput(t1, id, t2, id);
+		builder.linkOutput(t2, id, t3, id);
+		builder.linkOutput(t3, id, t4, id);
+		builder.linkOutput(t4, id, t5, id);
 
 		BenchmarkRunner runner = new BenchmarkRunner();
 		runner.setBenchmark(builder.createInstance());
@@ -103,21 +104,21 @@ public class BenchmarkRunnerTest {
 		BenchmarkBuilder builder = new BenchmarkBuilder();
 		builder.addAll(a1, a2, a3, b1, b2, b3, c1, c2, c3);
 		String out = AdditionTask.RESULT;
-		builder.link(a1, out, b1, 1);
-		builder.link(a1, out, b2, 1);
-		builder.link(a1, out, b3, 1);
-		builder.link(a2, out, b1, 2);
-		builder.link(a2, out, b2, 2);
-		builder.link(a3, out, b3, 2);
-		builder.link(b1, out, c1, 1);
-		builder.link(b1, out, c2, 1);
-		builder.link(b1, out, c3, 1);
-		builder.link(b2, out, c1, 2);
-		builder.link(b2, out, c2, 2);
-		builder.link(b2, out, c3, 2);
-		builder.link(b3, out, c1, 3);
-		builder.link(b3, out, c2, 3);
-		builder.link(b3, out, c3, 3);
+		builder.linkOutput(a1, out, b1, 1);
+		builder.linkOutput(a1, out, b2, 1);
+		builder.linkOutput(a1, out, b3, 1);
+		builder.linkOutput(a2, out, b1, 2);
+		builder.linkOutput(a2, out, b2, 2);
+		builder.linkOutput(a3, out, b3, 2);
+		builder.linkOutput(b1, out, c1, 1);
+		builder.linkOutput(b1, out, c2, 1);
+		builder.linkOutput(b1, out, c3, 1);
+		builder.linkOutput(b2, out, c1, 2);
+		builder.linkOutput(b2, out, c2, 2);
+		builder.linkOutput(b2, out, c3, 2);
+		builder.linkOutput(b3, out, c1, 3);
+		builder.linkOutput(b3, out, c2, 3);
+		builder.linkOutput(b3, out, c3, 3);
 
 		BenchmarkRunner runner = new BenchmarkRunner();
 		runner.setBenchmark(builder.createInstance());
@@ -207,8 +208,8 @@ public class BenchmarkRunnerTest {
 
 		BenchmarkBuilder builder = new BenchmarkBuilder();
 		builder.addAll(t1, t2, t3);
-		builder.link(t1, id, t2, id);
-		builder.link(t2, id, t3, id);
+		builder.linkOutput(t1, id, t2, id);
+		builder.linkOutput(t2, id, t3, id);
 		t1.getInput(id).set(1);
 
 		BenchmarkRunner runner = new BenchmarkRunner();
@@ -229,7 +230,8 @@ public class BenchmarkRunnerTest {
 					assertEquals(t1, e.getTask());
 				} else if (step == 2) {
 					assertTrue(event instanceof LinkTransferedEvent);
-					Link<?> link = ((LinkTransferedEvent) event).getLink();
+					SyncLink<?> link = (SyncLink<?>) ((LinkTransferedEvent) event)
+							.getLink();
 					assertEquals(t1, link.getSourceTask());
 					assertEquals(LinearTask.IN_OUT_ID, link.getSourceId());
 					assertEquals(t2, link.getTargetTask());
@@ -244,7 +246,8 @@ public class BenchmarkRunnerTest {
 					assertEquals(t2, e.getTask());
 				} else if (step == 5) {
 					assertTrue(event instanceof LinkTransferedEvent);
-					Link<?> link = ((LinkTransferedEvent) event).getLink();
+					SyncLink<?> link = (SyncLink<?>) ((LinkTransferedEvent) event)
+							.getLink();
 					assertEquals(t2, link.getSourceTask());
 					assertEquals(LinearTask.IN_OUT_ID, link.getSourceId());
 					assertEquals(t3, link.getTargetTask());

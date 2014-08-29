@@ -18,6 +18,7 @@ import fr.vergne.benchmark.event.LinkTransferedEvent;
 import fr.vergne.benchmark.event.TaskExecutedEvent;
 import fr.vergne.benchmark.event.TaskFailedEvent;
 import fr.vergne.benchmark.event.TaskSelectedEvent;
+import fr.vergne.benchmark.impl.SyncLink;
 import fr.vergne.logging.LoggerConfiguration;
 
 /**
@@ -83,7 +84,9 @@ public class TraceListener implements BenchmarkEventListener {
 			} else {
 				sourceWrapper.addNext(targetWrapper);
 			}
-			targetWrapper.setInput(link.getSourceId(), link.getValue(),
+			targetWrapper.setInput(
+					link instanceof SyncLink ? ((SyncLink<?>) link)
+							.getSourceId() : null, link.getValue(),
 					sourceWrapper);
 		} else {
 			logger.warning("Unmanaged event: " + event);

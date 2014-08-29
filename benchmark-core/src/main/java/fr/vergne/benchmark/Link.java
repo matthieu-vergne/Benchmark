@@ -1,85 +1,24 @@
 package fr.vergne.benchmark;
 
-import java.util.NoSuchElementException;
-
 /**
- * A {@link Link} aims at linking the output of a {@link Task} to the input of
- * another.
+ * A {@link Link} aims at setting the input of a {@link Task} based on another
+ * {@link Task}.
  * 
  * @author Matthieu Vergne <matthieu.vergne@gmail.com>
  * 
  */
-public class Link<Type> {
+public interface Link<Type> {
 
-	private final Task sourceTask;
-	private final Task targetTask;
-	private final Object sourceId;
-	private final Object targetId;
+	public Task getSourceTask();
 
-	public Link(Task from, Object outputId, Task to, Object inputId) {
-		this.sourceTask = from;
-		this.targetTask = to;
-		this.sourceId = outputId;
-		this.targetId = inputId;
-	}
+	public Task getTargetTask();
 
-	public Task getSourceTask() {
-		return sourceTask;
-	}
+	public Object getTargetId();
 
-	public Object getSourceId() {
-		return sourceId;
-	}
+	public Type getValue();
 
-	public OutputGetter<Type> getSource() {
-		return sourceTask.getOutput(sourceId);
-	}
+	boolean isTransferable();
 
-	public Task getTargetTask() {
-		return targetTask;
-	}
+	public void transfer();
 
-	public Object getTargetId() {
-		return targetId;
-	}
-
-	public InputSetter<Type> getTarget() {
-		return targetTask.getInput(targetId);
-	}
-
-	public Type getValue() {
-		if (isTransferable()) {
-			return getSource().get();
-		} else {
-			throw new NoSuchElementException(
-					"No value available for a link which is not transferable.");
-		}
-	}
-
-	public boolean isTransferable() {
-		return getSource().isSet();
-	}
-
-	public void transfer() {
-		getTarget().set(getValue());
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == this) {
-			return true;
-		} else if (obj instanceof Link) {
-			Link<?> l = (Link<?>) obj;
-			return l.sourceTask == sourceTask && l.sourceId == sourceId
-					&& l.targetTask == targetTask && l.targetId == targetId;
-		} else {
-			return false;
-		}
-	}
-
-	@Override
-	public int hashCode() {
-		return sourceTask.hashCode() * sourceId.hashCode()
-				* targetTask.hashCode() * targetId.hashCode();
-	}
 }

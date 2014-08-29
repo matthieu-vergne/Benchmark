@@ -8,7 +8,7 @@ import java.util.Collection;
  * inputs (or parameters) and outputs (or results). These inputs/outputs can be
  * accessed to set or get there values. In particular, this is by this way that
  * the output of a {@link Task} can be linked to the input of another
- * in {@link Benchmark#link(Task, Object, Task, Object)}.
+ * in {@link Benchmark#linkOutput(Task, Object, Task, Object)}.
  * 
  * @author Matthieu Vergne <matthieu.vergne@gmail.com>
  * 

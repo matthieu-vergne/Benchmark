@@ -25,8 +25,8 @@ public class BenchmarkBuilderTest {
 			LinearTask t2 = new LinearTask();
 			LinearTask t3 = new LinearTask();
 			builder.add(t1).add(t2).add(t3);
-			builder.link(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
-			builder.link(t2, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
+			builder.linkOutput(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
+			builder.linkOutput(t2, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
 			Benchmark benchmark = builder.clear().createInstance();
 			assertNotNull(benchmark.getTasks());
 			assertEquals(0, benchmark.getTasks().size());
@@ -71,31 +71,31 @@ public class BenchmarkBuilderTest {
 
 		assertEquals(0, builder.createInstance().getLinks().size());
 
-		builder.link(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
+		builder.linkOutput(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
 		assertEquals(1, builder.createInstance().getLinks().size());
 
-		builder.link(t2, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
+		builder.linkOutput(t2, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
 		assertEquals(2, builder.createInstance().getLinks().size());
 
-		builder.link(t1, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
+		builder.linkOutput(t1, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
 		assertEquals(3, builder.createInstance().getLinks().size());
 
-		builder.link(t2, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
+		builder.linkOutput(t2, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
 		assertEquals(3, builder.createInstance().getLinks().size());
 
-		builder.unlink(t3, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
+		builder.unlinkOutput(t3, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
 		assertEquals(3, builder.createInstance().getLinks().size());
 
-		builder.unlink(t2, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
+		builder.unlinkOutput(t2, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
 		assertEquals(2, builder.createInstance().getLinks().size());
 
-		builder.unlink(t1, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
+		builder.unlinkOutput(t1, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
 		assertEquals(1, builder.createInstance().getLinks().size());
 
-		builder.unlink(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
+		builder.unlinkOutput(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
 		assertEquals(0, builder.createInstance().getLinks().size());
 
-		builder.unlink(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
+		builder.unlinkOutput(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
 		assertEquals(0, builder.createInstance().getLinks().size());
 	}
 
@@ -109,7 +109,7 @@ public class BenchmarkBuilderTest {
 		builder.add(t1);
 		builder.add(t2);
 
-		builder.link(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
+		builder.linkOutput(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
 		try {
 			builder.remove(t1);
 			fail("The task should not be removable.");
@@ -121,7 +121,7 @@ public class BenchmarkBuilderTest {
 		} catch (IllegalArgumentException e) {
 		}
 
-		builder.unlink(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
+		builder.unlinkOutput(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
 		builder.remove(t1);
 		builder.remove(t2);
 	}
@@ -135,20 +135,20 @@ public class BenchmarkBuilderTest {
 		builder.clear();
 
 		try {
-			builder.link(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
+			builder.linkOutput(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
 			fail("The link should not be possible.");
 		} catch (IllegalArgumentException e) {
 		}
 
 		builder.add(t1);
 		try {
-			builder.link(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
+			builder.linkOutput(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
 			fail("The link should not be possible.");
 		} catch (IllegalArgumentException e) {
 		}
 
 		builder.add(t2);
-		builder.link(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
+		builder.linkOutput(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
 	}
 
 	@Test
@@ -162,18 +162,18 @@ public class BenchmarkBuilderTest {
 		builder.add(t1);
 		builder.add(t2);
 		builder.add(t3);
-		builder.link(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
-		builder.link(t2, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
-		builder.link(t1, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
+		builder.linkOutput(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
+		builder.linkOutput(t2, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
+		builder.linkOutput(t1, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
 
 		assertEquals(3, builder.createInstance().getLinks().size());
 		builder.unlinkAll(t2);
 		assertEquals(1, builder.createInstance().getLinks().size());
-		builder.unlink(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
+		builder.unlinkOutput(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
 		assertEquals(1, builder.createInstance().getLinks().size());
-		builder.unlink(t2, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
+		builder.unlinkOutput(t2, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
 		assertEquals(1, builder.createInstance().getLinks().size());
-		builder.unlink(t1, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
+		builder.unlinkOutput(t1, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
 		assertEquals(0, builder.createInstance().getLinks().size());
 	}
 
@@ -188,9 +188,9 @@ public class BenchmarkBuilderTest {
 		builder.add(t1);
 		builder.add(t2);
 		builder.add(t3);
-		builder.link(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
-		builder.link(t2, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
-		builder.link(t1, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
+		builder.linkOutput(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
+		builder.linkOutput(t2, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
+		builder.linkOutput(t1, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
 
 		assertTrue(builder.createInstance().getTasks().contains(t1));
 		assertTrue(builder.createInstance().getTasks().contains(t2));
@@ -201,19 +201,19 @@ public class BenchmarkBuilderTest {
 		assertTrue(builder.createInstance().getTasks().contains(t2));
 		assertTrue(builder.createInstance().getTasks().contains(t3));
 
-		builder.unlink(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
+		builder.unlinkOutput(t1, LinearTask.IN_OUT_ID, t2, LinearTask.IN_OUT_ID);
 		builder.clean();
 		assertTrue(builder.createInstance().getTasks().contains(t1));
 		assertTrue(builder.createInstance().getTasks().contains(t2));
 		assertTrue(builder.createInstance().getTasks().contains(t3));
 
-		builder.unlink(t2, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
+		builder.unlinkOutput(t2, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
 		builder.clean();
 		assertTrue(builder.createInstance().getTasks().contains(t1));
 		assertFalse(builder.createInstance().getTasks().contains(t2));
 		assertTrue(builder.createInstance().getTasks().contains(t3));
 
-		builder.unlink(t1, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
+		builder.unlinkOutput(t1, LinearTask.IN_OUT_ID, t3, LinearTask.IN_OUT_ID);
 		builder.clean();
 		assertFalse(builder.createInstance().getTasks().contains(t1));
 		assertFalse(builder.createInstance().getTasks().contains(t2));

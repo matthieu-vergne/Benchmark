@@ -5,7 +5,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
+import fr.vergne.benchmark.impl.ForcedLink;
 import fr.vergne.benchmark.impl.ImmutableBenchmark;
+import fr.vergne.benchmark.impl.SyncLink;
 
 /**
  * Builder to facilitate the creation of a {@link Benchmark}. All the methods
@@ -91,8 +93,8 @@ public class BenchmarkBuilder {
 	}
 
 	/**
-	 * This method links two {@link Task}s previously added. The {@link Link} is
-	 * not re-made if it has been made with a previous call.
+	 * This method links two {@link Task}s previously added. The
+	 * {@link SyncLink} is not re-made if it has been made with a previous call.
 	 * 
 	 * @param from
 	 *            the {@link Task} from which the output should be linked
@@ -105,7 +107,7 @@ public class BenchmarkBuilder {
 	 * @throws IllegalArgumentException
 	 *             if the {@link Task}s have not been added
 	 */
-	public <T> BenchmarkBuilder link(Task from, Object outputId, Task to,
+	public <T> BenchmarkBuilder linkOutput(Task from, Object outputId, Task to,
 			Object inputId) {
 		if (!tasks.contains(from)) {
 			throw new IllegalArgumentException(
@@ -114,14 +116,45 @@ public class BenchmarkBuilder {
 			throw new IllegalArgumentException(
 					"The target task has not been added: " + to);
 		} else {
-			links.add(new Link<T>(from, outputId, to, inputId));
+			links.add(new SyncLink<T>(from, outputId, to, inputId));
 			return this;
 		}
 	}
 
 	/**
-	 * This method removes a previously made {@link Link}. If such a link does
-	 * not exist, nothing happen.
+	 * This method links two {@link Task}s previously added. The
+	 * {@link ForcedLink} is not re-made if it has been made with a previous
+	 * call.
+	 * 
+	 * @param from
+	 *            the {@link Task} from which the output should be linked
+	 * @param value
+	 *            the value to transfer
+	 * @param to
+	 *            the {@link Task} to which the output should be linked
+	 * @param inputId
+	 *            the ID of the input to link
+	 * @throws IllegalArgumentException
+	 *             if the {@link Task}s have not been added
+	 */
+	// FIXME test
+	public <T> BenchmarkBuilder linkValue(Task from, T value, Task to,
+			Object inputId) {
+		if (!tasks.contains(from)) {
+			throw new IllegalArgumentException(
+					"The source task has not been added: " + from);
+		} else if (!tasks.contains(to)) {
+			throw new IllegalArgumentException(
+					"The target task has not been added: " + to);
+		} else {
+			links.add(new ForcedLink<T>(from, value, to, inputId));
+			return this;
+		}
+	}
+
+	/**
+	 * This method removes a previously made {@link SyncLink}. If such a link
+	 * does not exist, nothing happen.
 	 * 
 	 * @param from
 	 *            the {@link Task} from which the output is linked
@@ -132,9 +165,26 @@ public class BenchmarkBuilder {
 	 * @param inputId
 	 *            the ID of the linked input
 	 */
-	public <T> BenchmarkBuilder unlink(Task from, Object outputId, Task to,
-			Object inputId) {
-		links.remove(new Link<T>(from, outputId, to, inputId));
+	public <T> BenchmarkBuilder unlinkOutput(Task from, Object outputId,
+			Task to, Object inputId) {
+		links.remove(new SyncLink<T>(from, outputId, to, inputId));
+		return this;
+	}
+
+	/**
+	 * This method removes a previously made {@link ForcedLink}. If such a link
+	 * does not exist, nothing happen.
+	 * 
+	 * @param from
+	 *            the {@link Task} from which the output is linked
+	 * @param to
+	 *            the {@link Task} to which the output is linked
+	 * @param inputId
+	 *            the ID of the linked input
+	 */
+	// FIXME test
+	public <T> BenchmarkBuilder unlinkValue(Task from, Task to, Object inputId) {
+		links.remove(new ForcedLink<T>(from, null, to, inputId));
 		return this;
 	}
 
