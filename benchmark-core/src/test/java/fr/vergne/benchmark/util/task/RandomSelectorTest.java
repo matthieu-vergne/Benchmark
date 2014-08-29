@@ -1,4 +1,4 @@
-package fr.vergne.benchmark.impl;
+package fr.vergne.benchmark.util.task;
 
 import static org.junit.Assert.*;
 

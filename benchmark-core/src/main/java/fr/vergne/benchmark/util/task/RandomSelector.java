@@ -1,4 +1,4 @@
-package fr.vergne.benchmark.impl;
+package fr.vergne.benchmark.util.task;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import java.util.Random;
 import fr.vergne.benchmark.InputSetter;
 import fr.vergne.benchmark.OutputGetter;
 import fr.vergne.benchmark.Task;
+import fr.vergne.benchmark.impl.AbstractSimpleTask;
 
 /**
  * A {@link RandomSelector} is a {@link Task} aiming at selecting a random item

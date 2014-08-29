@@ -1,4 +1,4 @@
-package fr.vergne.benchmark.impl;
+package fr.vergne.benchmark.util.task;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,6 +6,7 @@ import java.util.Map;
 import fr.vergne.benchmark.InputSetter;
 import fr.vergne.benchmark.OutputGetter;
 import fr.vergne.benchmark.Task;
+import fr.vergne.benchmark.impl.AbstractSimpleTask;
 
 /**
  * A simple {@link Task} to retrieve an item from a {@link Map}.
