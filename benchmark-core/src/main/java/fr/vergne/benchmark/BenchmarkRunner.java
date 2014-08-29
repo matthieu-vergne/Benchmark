@@ -25,6 +25,13 @@ public class BenchmarkRunner {
 	private Benchmark benchmark = null;
 	private Collection<BenchmarkEventListener> listeners = new LinkedHashSet<BenchmarkEventListener>();
 
+	public BenchmarkRunner() {
+	}
+
+	public BenchmarkRunner(Benchmark benchmark) {
+		setBenchmark(benchmark);
+	}
+
 	public void setBenchmark(Benchmark benchmark) {
 		this.benchmark = benchmark;
 	}
