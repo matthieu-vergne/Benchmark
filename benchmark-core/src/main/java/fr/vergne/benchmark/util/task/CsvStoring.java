@@ -22,7 +22,7 @@ import fr.vergne.benchmark.OutputGetter;
 import fr.vergne.benchmark.impl.AbstractSimpleTask;
 
 /**
- * A {@link CsvStoring} receive some inputs which will be stores in a CSV file
+ * A {@link CsvStoring} receives some inputs which will be stored in a CSV file
  * when it will be executed. When instantiating a {@link CsvStoring}, the
  * {@link Renderer}s should be provided, but if the values provided have their
  * own {@link String} representation <code>null</code> can be provided as a
@@ -54,7 +54,7 @@ public class CsvStoring extends AbstractSimpleTask {
 
 	/**
 	 * Creates a {@link CsvStoring} with specific {@link Renderer}s for each
-	 * input. If the ones having no {@link Renderer} (<code>null</code>), a
+	 * input. For the ones having no {@link Renderer} (<code>null</code>), a
 	 * default one will be provided, which relies on the
 	 * {@link Object#toString()} method.
 	 * 
