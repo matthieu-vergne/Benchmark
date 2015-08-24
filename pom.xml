@@ -15,8 +15,8 @@
 	</modules>
 
 	<scm>
-		<connection>scm:git:git://github.com/matthieu-vergne/Benchmark.git</connection>
-		<developerConnection>scm:git:git://github.com/matthieu-vergne/Benchmark.git</developerConnection>
+		<connection>scm:git:https://matthieu-vergne@github.com/matthieu-vergne/Benchmark.git</connection>
+		<developerConnection>scm:git:https://matthieu-vergne@github.com/matthieu-vergne/Benchmark.git</developerConnection>
 		<url>scm:git:git://github.com/matthieu-vergne/Benchmark.git</url>
 	</scm>
 	
