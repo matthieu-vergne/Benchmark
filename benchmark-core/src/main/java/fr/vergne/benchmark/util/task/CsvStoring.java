@@ -14,12 +14,11 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import fr.vergne.benchmark.InputSetter;
 import fr.vergne.benchmark.OutputGetter;
 import fr.vergne.benchmark.impl.AbstractSimpleTask;
+import fr.vergne.ioutils.FileUtils;
+import fr.vergne.ioutils.StringUtils;
 
 /**
  * A {@link CsvStoring} receives some inputs which will be stored in a CSV file
